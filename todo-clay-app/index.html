@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clay Todo List</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="todo-card" aria-labelledby="app-title">
+      <div class="app-header">
+        <span class="badge">TODAY</span>
+        <h1 id="app-title">My Todo List</h1>
+        <p>오늘 해야 할 일을 가볍게 정리해보세요.</p>
+      </div>
+
+      <form class="todo-form" id="todoForm">
+        <label class="sr-only" for="todoInput">할 일 입력</label>
+        <input
+          type="text"
+          id="todoInput"
+          placeholder="할 일을 입력하세요"
+          autocomplete="off"
+        />
+        <button type="submit">추가</button>
+      </form>
+
+      <div class="filter-tabs" role="tablist" aria-label="할 일 필터">
+        <button type="button" class="tab active" data-filter="all">전체</button>
+        <button type="button" class="tab" data-filter="active">진행중</button>
+        <button type="button" class="tab" data-filter="completed">완료</button>
+      </div>
+
+      <div class="todo-info">
+        <span id="leftCount">남은 할 일 0개</span>
+      </div>
+
+      <ul class="todo-list" id="todoList" aria-live="polite"></ul>
+
+      <p class="empty-message" id="emptyMessage">아직 등록된 할 일이 없습니다.</p>
+    </section>
+  </main>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
