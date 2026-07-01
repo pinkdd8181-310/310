@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>로또번호생성기</title>
+  
+  <!-- 모바일 웹앱 설정 -->
+ <meta name="theme-color" content="#7C3AED">
+ <meta name="mobile-web-app-capable" content="yes">
+ <meta name="apple-mobile-web-app-capable" content="yes">
+ <meta name="apple-mobile-web-app-title" content="로또번호생성기">
+ <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+ <!-- 파비콘 / 앱 아이콘 -->
+ <link rel="icon" href="logo.png">
+ <link rel="apple-touch-icon" href="logo.png">
+
+  <style>
+    /* 전체 배경 설정 - 어두운 색 */
+    body {
+      background-color: #1a1a2e;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;      /* 가로 가운데 정렬 */
+      justify-content: center;  /* 세로 가운데 정렬 */
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    /* 제목 스타일 */
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #ffd700; /* 금색 느낌 */
+    }
+
+    /* 로또 번호 ball들이 들어갈 영역 */
+    #numArea {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;          /* 화면이 작으면 자동 줄바꿈 */
+      justify-content: center;
+      margin-bottom: 40px;
+      min-height: 80px;
+    }
+
+    /* 번호 ball 기본 모양 (동그라미) */
+    .ball-num {
+      width: 60px;1
+      height: 60px;
+      border-radius: 50%;       /* 완전한 원 모양 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #1a1a2e;           /* 배경이 밝으니 글씨는 어둡게 */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4); /* 입체감 있는 그림자 */
+      animation: ball-appearance 0.4s ease;
+    }
+
+    /* ball이 하나씩 나타나는 애니메이션 */
+    @keyframes ball-appearance {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* 번호 범위별 색깔 지정 */
+    .color-yellow { background-color: #ffe066; } /* 1~10 */
+    .color-blue { background-color: #4dabf7; } /* 11~20 */
+    .color-red { background-color: #ff6b6b; } /* 21~30 */
+    .color-gray { background-color: #ced4da; } /* 31~40 */
+    .color-green { background-color: #69db7c; } /* 41~45 */
+
+    /* 추첨 버튼 스타일 - 크고 누르기 쉽게 */
+    #clickBtn {
+      font-size: 22px;
+      font-weight: bold;
+      padding: 20px 50px;
+      border: none;
+      border-radius: 50px;      /* 둥근 알약 모양 버튼 */
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      color: #1a1a2e;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+      transition: transform 0.15s ease; /* 눌렀을 때 부드러운 느낌 */
+    }
+
+    /* 버튼을 누르는 순간(active) 살짝 작아지는 효과 */
+    #clickBtn:active {
+      transform: scale(0.95);
+    }
+
+    /* 모바일 화면 대응 - ball 크기와 버튼 크기 살짝 축소 */
+    @media (max-width: 400px) {
+      .ball-num {
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+      }
+      #clickBtn {
+        font-size: 18px;
+        padding: 16px 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- 제목구간 -->
+  <h1>🎱 로또번호추첨기</h1>
+
+  <!-- 추첨된 번호 ball들이 표시될 영역 -->
+  <div id="numArea"></div>
+
+  <!-- 클릭하면 번호를 추첨하는 버튼 -->
+  <button id="clickBtn" onclick="lottoDraw()">번호 추첨하기</button>
+
+  <script>
+    // 번호 범위에 따라 색깔 클래스를 반환해주는 함수
+    function getColorClass(num) {
+      if (num <= 10) return 'color-yellow';        // 1~10
+      if (num <= 20) return 'color-blue';        // 11~20
+      if (num <= 30) return 'color-red';        // 21~30
+      if (num <= 40) return 'color-gray';        // 31~40
+      return 'color-green';                        // 41~45
+    }
+
+    // 1~45 사이에서 중복 없는 num 6개를 뽑는 함수
+    function lottoGenerator() {
+      const numList = new Set(); // Set을 쓰면 중복된 num가 자동으로 걸러짐
+
+      // 6개가 채워질 때까지 랜덤 num를 계속 뽑음
+      while (numList.size < 6) {
+        const randomNum = Math.floor(Math.random() * 45) + 1; // 1~45 사이 정수
+        numList.add(randomNum);
+      }
+
+      // Set을 배열로 바꾸고 오름차순으로 정렬
+      return Array.from(numList).sort((a, b) => a - b);
+    }
+
+    // 버튼 클릭 시 실행되는 메인 함수
+    function lottoDraw() {
+      const numArea = document.getElementById('numArea');
+      numArea.innerHTML = ''; // 이전에 뽑았던 번호 지우기
+
+      const selectedNums = lottoGenerator(); // 새로운 번호 6개 뽑기
+
+      // 뽑힌 번호를 하나씩 화면에 ball 모양으로 추가
+      selectedNums.forEach(function(num, index) {
+        const ball = document.createElement('div');
+        ball.className = 'ball-num ' + getColorClass(num); // 기본 모양 + 색깔 클래스
+        ball.textContent = num;
+
+        // ball이 하나씩 순서대로 나타나도록 살짝 시간차를 줌
+        ball.style.animationDelay = (index * 0.1) + 's';
+
+        numArea.appendChild(ball);
+      });
+    }
+  </script>
+
+</body>
+</html>
